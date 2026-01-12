@@ -7,6 +7,8 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 
+@Entity
+@Table(name = "users")
 @Getter
 @Setter
 public class User {
@@ -20,14 +22,15 @@ public class User {
     @Column(unique = true)
     private String email;
     private String password;
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     private boolean isActive;
 
-    User() {
+    public User() {
     }
-    User(Long id, String name, String surname, String email, String password) {
-        this.id = id;
+    public User(String name, String surname, String email, String password) {
         this.name = name;
         this.surname = surname;
         this.email = email;
@@ -36,4 +39,16 @@ public class User {
         this.updatedAt = LocalDateTime.now();
         this.isActive = true;
     }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
 }

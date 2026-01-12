@@ -1,0 +1,9 @@
+POST http://localhost:8080/travel-journal/users/create
+Content-Type: application/json
+
+{
+  "name": "Ion",
+  "surname": "Popescu",
+  "email": "ion.popescu@test.com",
+  "password": "parola_test"
+}
