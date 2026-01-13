@@ -36,7 +36,9 @@ public class UserServiceImpl implements UserService{
         if (user.isPresent() && user.get().getPassword().equals(request.password())) {
             return new LoginResponse(user.get().getId(), user.get().getId());
         }
-        return new LoginResponse(0L, 0L);
+        else{
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
     }
 
     public UserResponse updateUser(Long id, UpdateUserRequest request) {
@@ -63,9 +65,5 @@ public class UserServiceImpl implements UserService{
                 .map(user -> new UserResponse(user.getId(), user.getName(), user.getSurname(), user.getEmail()))
                 .orElseThrow(() ->new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
-
-
-
-
 
 }
