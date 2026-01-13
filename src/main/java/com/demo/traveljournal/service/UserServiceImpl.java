@@ -3,7 +3,10 @@ package com.demo.traveljournal.service;
 import com.demo.traveljournal.dto.*;
 import com.demo.traveljournal.model.User;
 import com.demo.traveljournal.repository.UserRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Random;
@@ -38,12 +41,8 @@ public class UserServiceImpl implements UserService{
 
     public UserResponse updateUser(Long id, UpdateUserRequest request) {
         User user = userRepository.findById(id).orElseThrow();
-        if(request.surname().isPresent()){
-            user.setSurname(String.valueOf(request.surname()));
-        }
-        if(request.name().isPresent()){
-            user.setName(String.valueOf(request.name()));
-        }
+        request.name().ifPresent(user::setName);
+        request.surname().ifPresent(user::setSurname);
         userRepository.save(user);
         return new UserResponse(user.getId(), user.getName(), user.getSurname(), user.getEmail());
     }
@@ -60,11 +59,9 @@ public class UserServiceImpl implements UserService{
     }
 
     public UserResponse getUserById(Long userId) {
-        var user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            return new UserResponse(user.get().getId(), user.get().getName(), user.get().getSurname(), user.get().getEmail());
-        }
-        return null;
+        return userRepository.findById(userId)
+                .map(user -> new UserResponse(user.getId(), user.getName(), user.getSurname(), user.getEmail()))
+                .orElseThrow(() ->new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
 
